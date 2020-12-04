@@ -12,5 +12,5 @@
 		out.print(getMsgBack("삭제실패"));
 	}else{
 		out.print(getMsgURL("삭제성공","/board/list.jsp"));
-	}	
+	}
 %>

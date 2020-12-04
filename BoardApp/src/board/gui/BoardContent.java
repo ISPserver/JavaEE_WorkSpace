@@ -60,18 +60,24 @@ public class BoardContent extends Page{
 		});
 		
 		bt_del.addActionListener((e)-> {
-			boardList = (BoardList)boardMain.pageList[0];
-			int result = noticeDAO.delete(Integer.parseInt(boardList.notice_id));
-			if(result==0) {
-				JOptionPane.showMessageDialog(BoardContent.this, "삭제 실패");
-			}else {
-				JOptionPane.showMessageDialog(BoardContent.this, "삭제 성공");
-			}
-			boardMain.showPage(Pages.valueOf("BoardList").ordinal());
+			del();
 		});
 	}
-	
-	public void edit() {			
+	//삭제하고 목록 보여주기
+	public void del() {
+		int result = noticeDAO.delete(notice.getNotice_id());
+		if(result==0) {
+			JOptionPane.showMessageDialog(BoardContent.this, "삭제 실패");
+		}else {
+			JOptionPane.showMessageDialog(BoardContent.this, "삭제 성공");
+			BoardList boardList = (BoardList)boardMain.pageList[Pages.valueOf("BoardList").ordinal()];
+			boardList.getList();//데이터 가져오기
+			boardList.table.updateUI();//화면 갱신
+			boardMain.showPage(Pages.valueOf("BoardList").ordinal());
+		}
+	}
+	public void edit() {
+		//DAO를 이용해 수정작업 실행
 		notice.setAuthor(t_author.getText());
 		notice.setTitle(t_title.getText());
 		notice.setContent(area.getText());
@@ -80,6 +86,9 @@ public class BoardContent extends Page{
 			JOptionPane.showMessageDialog(this, "수정성공");
 		}else {
 			JOptionPane.showMessageDialog(this, "수정성공");
+			BoardList boardList = (BoardList)boardMain.pageList[Pages.valueOf("BoardList").ordinal()];
+			boardList.getList();//데이터 가져오기
+			boardList.table.updateUI();//화면 갱신
 		}		
 		boardMain.showPage(Pages.valueOf("BoardList").ordinal());
 	}

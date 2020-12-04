@@ -15,12 +15,13 @@
 	String content	=  request.getParameter("content"); //내용
 	String notice_id	=  request.getParameter("notice_id"); //notice_id
 	
-	NoticeDAO noticeDAO = new NoticeDAO();
 	Notice notice = new Notice();
 	notice.setAuthor(author);
 	notice.setTitle(title);
 	notice.setContent(content);
 	notice.setNotice_id(Integer.parseInt(notice_id));
+	
+	NoticeDAO noticeDAO = new NoticeDAO();
 	int result = noticeDAO.update(notice);
 	
 	if(result==0){

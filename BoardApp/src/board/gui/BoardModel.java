@@ -29,11 +29,11 @@ public class BoardModel extends AbstractTableModel{
 			obj = Integer.toString(notice.getNotice_id());
 		}else if(col==1) {//작성자
 			obj = notice.getAuthor();
-		}else if(col==1) {//제목
+		}else if(col==2) {//제목
 			obj = notice.getTitle();
-		}else if(col==1) {//등록일
+		}else if(col==3) {//등록일
 			obj = notice.getRegdate();
-		}else if(col==1) {//조회수
+		}else if(col==4) {//조회수
 			obj = Integer.toString(notice.getHit());
 		}
 		return obj;

@@ -1,32 +1,70 @@
+<%@page import="java.util.List"%>
+<%@page import="org.apache.commons.fileupload.DefaultFileItemFactory"%>
 <%@page import="board.model.ImageBoard"%>
 <%@page import="board.model.ImageBoardDAO"%>
-<%@ page contentType="text/html;charset=utf-8"%>
+<%@page import="common.FileManager"%>
+<%@page import="org.apache.commons.fileupload.FileItem"%>
+<%@page import="java.io.File"%>
+<%@page import="org.apache.commons.fileupload.servlet.ServletFileUpload"%>
 <%@ include file="/inc/lib.jsp" %>
+<%@ page contentType="text/html;charset=utf-8"%>
+<%! 
+	String saveDir="C:/javaEE_workspace/BoardApp/WebContent/data";
+	int maxSize=3*1024*1024; //3M byte
+	ImageBoardDAO dao = new ImageBoardDAO();
+%>
 <%
+	//실습했던 예제보다 기능이 더 추가됨, db에 넣어야함 DAO 이용
+	
+	DefaultFileItemFactory itemFactory = new DefaultFileItemFactory();
+	itemFactory.setRepository(new File(saveDir));	
+	itemFactory.setSizeThreshold(maxSize);
+	itemFactory.setDefaultCharset("utf-8");
+	
+	ServletFileUpload upload = new ServletFileUpload(itemFactory);
+	
+	//업로드된 정보 분석--> 각각의 컴포넌트들을 FileItem으로 받는다.
 	request.setCharacterEncoding("utf-8");
-	//파라미터 받기
-	String board_id = request.getParameter("board_id");
-	String author = request.getParameter("author");
-	String title = request.getParameter("title");
-	String content = request.getParameter("content");
-	String filename = request.getParameter("filename");
+	List<FileItem> items = upload.parseRequest(request);
 	
-	//VO 생성
-	ImageBoard board = new ImageBoard();
-	board.setBoard_id(Integer.parseInt(board_id));
-	board.setAuthor(author);
-	board.setTitle(title);
-	board.setContent(content);
-	board.setFilename(filename);
+	ImageBoard board = new ImageBoard();//Empty상태 VO 생성
 	
-	//DAO에 VO전달 (Update)
-	ImageBoardDAO boardDAO = new ImageBoardDAO();
-	int result = boardDAO.update(board);
 	
-	if(result==0){
-		out.print(getMsgBack("수정실패"));
-	}else{
-		out.print(getMsgURL("수정성공", "/imageboard/list.jsp"));
+	for(FileItem item : items){
+		if(item.isFormField()){//textField라면 DB에 넣기
+			//VO에 텍스트필드 값 담기
+			if(item.getFieldName().equals("board_id")){
+				board.setBoard_id(Integer.parseInt(item.getString()));
+			}else if(item.getFieldName().equals("author")){//필드명이 author면
+				board.setAuthor(item.getString());
+			}else if(item.getFieldName().equals("title")){//필드명이 author면
+				board.setTitle(item.getString());
+			}else if(item.getFieldName().equals("content")){//필드명이 author면
+				board.setContent(item.getString());
+			}else if(item.getFieldName().equals("filename")){//필드명이 author면
+				board.setFilename(item.getString());				
+			}
+					
+		}else{//textField가 아니라면 업로드 처리
+			if(item.getString().length()>0){//파일을 교체한다면,즉 업로드 원하면
+				String newName=System.currentTimeMillis()+"."+FileManager.getExtend(item.getName());
+				String destFile = saveDir+"/"+newName;
+				File file = new File(destFile);
+				item.write(file);//물리적 저장 시점
+				board.setFilename(newName);//vo에 파일명 담기						
+				
+			}else{
+				break;
+			}
+		}
 	}
+
+	//반복문을 지나친 이 시점에는 VO에 데이터가 이미 채워진 상태
 	
+	int result = dao.update(board);//이 시점에는 채워진 VO를 원함
+	if(result==0){
+		out.print(getMsgBack("등록실패"));
+	}else{
+		out.print(getMsgURL("등록성공", "/imageboard/list.jsp"));
+	}
 %>

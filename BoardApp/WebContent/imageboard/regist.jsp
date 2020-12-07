@@ -19,7 +19,7 @@
 	DefaultFileItemFactory itemFactory = new DefaultFileItemFactory();
 	itemFactory.setRepository(new File(saveDir));	
 	itemFactory.setSizeThreshold(maxSize);
-		
+	itemFactory.setDefaultCharset("utf-8");
 	
 	ServletFileUpload upload = new ServletFileUpload(itemFactory);
 	

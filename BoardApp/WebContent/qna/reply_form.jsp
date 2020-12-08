@@ -3,9 +3,10 @@
 <%@ page contentType="text/html;charset=utf-8"%>
 <%@ page import="java.sql.*"%>
 <%
-	String qna_id = request.getParameter("qna_id");
-	QnADAO qnADAO = new QnADAO();
-	QnA qna = qnADAO.select(Integer.parseInt(qna_id));
+	//상세보기 페이지 Hidden을 통해 전송된 파라미터를 얻기	
+	String team = request.getParameter("team");
+	String rank = request.getParameter("rank");
+	String depth = request.getParameter("depth");
 %>
 <!DOCTYPE html>
 <html>
@@ -37,7 +38,7 @@ input[type=button]:hover {
 }
 .container {
   border-radius: 5px;
-  background-color: #f2f2f2;
+  background-color: #ffdd00;
   padding: 20px;
 }
 textarea{
@@ -54,35 +55,20 @@ POST : Http프로토콜에서 바디영역에 데이터를 실어 나른다. 몸
          현실비유) 편지지에 데이터를 숨겨 보내는 꼴임..
 */
 $(function(){
-	CKEDITOR.replace('subject'); //textarea에 부여한 ID-->Editor
-	$($("input[type='button']")[0]).click(function(){ //목록으로
-		location.href="/qna/list.jsp";
-	});
-	$($("input[type='button']")[1]).click(function(){//수정요청
-		if(confirm("수정하시겠어요?")){
-			$("form").attr({
-				method:"post",
-				action:"/qna/edit.jsp"
-			});
-			$("form").submit(); //전송행위!!!
-		}
-	});
-	$($("input[type='button']")[2]).click(function(){//삭제요청
-		if(confirm("삭제하시겠습니까?")){
-			$("form").attr({
-				method:"post",
-				action:"/qna/delete.jsp"
-			});
-			$("form").submit(); //전송행위!!!
-		}
-	});
-	$($("input[type='button']")[3]).click(function(){//답글 폼 요청		
+	CKEDITOR.replace("subject"); //textarea에 부여한  id를 넣음
+	
+	$($("input[type='button']")[0]).click(function(){//답글 등록
 		$("form").attr({
 			method:"post",
-			action:"/qna/reply_form.jsp"
+			action:"/qna/reply.jsp"
 		});
-		$("form").submit(); //전송행위!!!	
-});
+		$("form").submit(); //전송행위!!!
+	});
+	
+	$($("input[type='button']")[1]).click(function(){//답글 등록
+		history.back();
+	});
+	
 });
 </script>
 </head>
@@ -90,24 +76,21 @@ $(function(){
 
 <div class="container">
   <form>
-	<input type="hidden" name="qna_id" value="<%=qna.getQna_id() %>">
-	<input type="hidden" name="team" value="<%=qna.getTeam() %>">
-	<input type="hidden" name="rank" value="<%=qna.getRank() %>">
-	<input type="hidden" name="depth" value="<%=qna.getDepth() %>">
-
+  	<input type="hidden" name="team" value="<%=team%>">
+  	<input type="hidden" name="rank" value="<%=rank%>">
+  	<input type="hidden" name="depth" value="<%=depth%>">
+  	
     <label for="fname">First Name</label>
-    <input type="text" id="fname" name="writer" value="<%=qna.getWriter()%>">
+    <input type="text" id="fname" name="writer">
 
     <label for="lname">title</label>
-    <input type="text" id="lname" name="title" value="<%=qna.getTitle()%>">
+    <input type="text" id="lname" name="title">
 
 	<label for="subject">Content</label>
-    <textarea id="subject" name="content" placeholder="Write something.." style="height:200px"><%=qna.getContent()%></textarea>
+    <textarea id="subject" name="content" placeholder="Write something.." style="height:200px"></textarea>
 
-    <input type="button" value="목록으로">
-	<input type="button" value="수정하기">
-	<input type="button" value="삭제하기">
-	<input type="button" value="답글등록">
+    <input type="button" value="답글등록">
+	<input type="button" value="이전으로">
   </form>
 </div>
 <div style="text-align:center">

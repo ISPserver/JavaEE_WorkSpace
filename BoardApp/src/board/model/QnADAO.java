@@ -49,9 +49,54 @@ public class QnADAO {
 	}
 	
 	//답변글
-	public int reply() {
+	public int reply(QnA qna) {
+		Connection con=null;
+		PreparedStatement pstmt =null;		
 		int result=0;
-		return result;
+		con = dbManager.getConnection();
+		
+		try {
+			con.setAutoCommit(false);//자동 커밋 취소(SQLplust처럼 개발자가 결정)
+			
+			//update
+			String sql="update qna set rank=rank+1 where team=? and rank > ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, qna.getTeam());
+			pstmt.setInt(2, qna.getRank());
+			
+			pstmt.executeUpdate();
+			
+			//insert
+			sql="insert into qna(writer,title,content,team,rank,depth)";			
+			sql+=" values(?,?,?,?,?,?)";	
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, qna.getWriter());
+			pstmt.setString(2, qna.getTitle());
+			pstmt.setString(3, qna.getContent());
+			pstmt.setInt(4, qna.getTeam());
+			pstmt.setInt(5, qna.getRank()+1);//내본글 다음에 위치하게끔 +1
+			pstmt.setInt(6, qna.getDepth()+1);//내본글에 대한 답변이므로 +1
+			
+			result = pstmt.executeUpdate();
+			
+			con.commit();//update,insert 문 둘다 에러가 안나면 모두 성공으로 간주
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				con.rollback();//2개의 쿼리 중 하나라도 에러나면 rollback
+			} catch (SQLException e1) { 
+				e1.printStackTrace();
+			}
+		} finally {
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			dbManager.release(con, pstmt);
+		}
+		
+		return result;	
 	}
 	//selectAll
 	public List selectAll() {
@@ -124,13 +169,66 @@ public class QnADAO {
 		return qna;
 	}
 	//update
-	public int update() {
+	public int update(QnA qna) {
+		Connection con = null;
+		PreparedStatement pstmt= null;
 		int result=0;
+		con = dbManager.getConnection();
+		
+		String sql="update qna set writer=?, title=?, content=? where qna_id=?";
+		try {
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, qna.getWriter());
+			pstmt.setString(2, qna.getTitle());
+			pstmt.setString(3, qna.getContent());
+			pstmt.setInt(4, qna.getQna_id());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			dbManager.release(con, pstmt);
+		}
 		return result;
 	}
 	//delete
-	public int delete() {
+	public int delete(QnA qna) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs=null;
 		int result=0;
+		con=dbManager.getConnection();
+		String sql=null;		
+		try {
+			sql="select depth from qna where team=? and rank=? order by team desc, rank asc";			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, qna.getTeam());
+			pstmt.setInt(2, qna.getRank()+1);
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) {				
+				if(rs.getInt("depth")!=(qna.getDepth()+1)) {
+					sql="delete from qna where qna_id="+qna.getQna_id();
+					pstmt = con.prepareStatement(sql);
+					result = pstmt.executeUpdate();
+				}else {
+					sql="update qna set title='---삭제된 글입니다---' where qna_id="+qna.getQna_id();
+					pstmt = con.prepareStatement(sql);
+					result = pstmt.executeUpdate();
+				}
+			}else {
+				sql="delete from qna where qna_id="+qna.getQna_id();
+				pstmt = con.prepareStatement(sql);
+				result = pstmt.executeUpdate();
+			}
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			dbManager.release(con, pstmt, rs);
+		}
+		
 		return result;
 	}
 }

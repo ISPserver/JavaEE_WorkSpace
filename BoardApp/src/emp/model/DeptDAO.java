@@ -1,0 +1,32 @@
+/*
+ * 지금까지는 DAO의 코드 기술을 JDBC로 이용했기 때문에 쿼리문보다 그 외의 코드가 더 장황했음
+ * 따라서 이번 DAO에서는 mybatis 프레임웍을 도입하여, 코드를 보다 간결하게 작성할것임
+ *  
+ */
+package emp.model;
+
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import db.MybatisManager;
+
+public class DeptDAO {
+	//DAO에서 SQL문이 들어있는 xml을 호출하기, 이때 어떤 쿼리수행인지 구분위해서
+	//xml 태그에 부여한 ID를 이용하면 된다.
+	//xml 태그를 호출하기 위해서는 mybatis의 SqlSession이 필요하고,
+	//현재는 MybatisManager 클래스의 멤버로 두었음
+	MybatisManager manager = new MybatisManager();
+	SqlSessionFactory factory;
+	
+	public DeptDAO() {
+		factory = manager.getSqlSessionFactory();
+	}
+	
+	//모든 데이터 가져오기
+	public List selectAll() {
+		SqlSession session = factory.openSession();//쿼리문 수행객체 생성
+		return session.selectList("mybatis.config.Dept.selectAll");		
+	}
+}

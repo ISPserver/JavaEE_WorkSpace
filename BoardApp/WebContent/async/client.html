@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+<script>
+		function loadDoc() {
+		var xhttp = new XMLHttpRequest();//비동기 통신 객체
+			/*
+			0: request not initialized: 요청준비도 안된 상태
+			1: server connection established: 서버와 네트워크 연결된 상태
+			2: request received: 요청이 서버에 도달 
+			3: processing request: 서버가 요청을 처리중
+			4: request finished and response is ready: 요청 처리가 완료,응답 받는단계 
+			*/
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				document.getElementById("box").innerHTML = this.responseText;
+			}
+		};
+		xhttp.open("GET", "/async/test.jsp", true);//비동기는true 동기는false
+		xhttp.send();
+	}
+function loadSync(){
+	//기존화면 사라지고 새로운 페이지 대체되는 동기 방식
+	location.href="/async/test.jsp";//get방식 요청
+}	
+
+function loadAsync() {
+	loadDoc();	
+}
+
+</script>
+</head>
+<body>	
+	<button onClick="loadSync()">동기(sync)로 가져오기</button>
+	<button onClick="loadAsync()">비동기(Async)로 가져오기</button>
+	<div id="box">기존 텍스트</div>
+</body>
+</html>

@@ -67,8 +67,8 @@ function regist() {
 
 <div class="container">
   <form>
-    <input type="text" name="writer" placeholder="Your name..">
     <input type="text" name="title" placeholder="Your last name..">
+    <input type="text" name="writer" placeholder="Your name..">
     <textarea name="content" placeholder="Write something.." style="height:200px"></textarea>
     <input type="file" name="photo"><p>
 

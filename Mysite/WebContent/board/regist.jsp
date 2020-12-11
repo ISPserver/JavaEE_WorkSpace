@@ -1,7 +1,13 @@
+<%@page import="board.model.BoardDAO"%>
+<%@page import="common.file.FileManager"%>
+<%@page import="board.model.Board"%>
+<%@page import="org.apache.commons.fileupload.FileItem"%>
+<%@page import="java.util.List"%>
 <%@page import="java.io.File"%>
 <%@page import="org.apache.commons.fileupload.disk.DiskFileItemFactory"%>
 <%@page import="org.apache.commons.fileupload.servlet.ServletFileUpload"%>
 <%@ page contentType="text/html;charset=utf-8"%>
+<%@ include file="/inc/lib.jsp" %>
 <%
 	//multipart/form-data 방식으로 전송된 파라미터는 업로드 컴포넌트를 통해 처리해야함
 	
@@ -14,11 +20,49 @@
 	//어떤 디렉토리에서 사이트가 실행되는지 조차 알아낼 수 있다.
 	String realPath = application.getRealPath("/data");//웹사이트의 루트를 기준으로 특정 파일이나 디렉토리 명시하면,
 	//스스로 현재 웹사이트가 얹혀진 os로부터 풀경로를 구해온다.
-	out.print(realPath);
+	//out.print(realPath);
 	
-	factory.setRepository(new File("C:/javaEE_workspace/Mysite/WebContent/data"));//임시적으로 사용할 경로
+	factory.setRepository(new File(realPath));//임시적으로 사용할 경로
 	factory.setSizeThreshold(2*1024*1024); //2M
-
+	factory.setDefaultCharset("utf-8");
+	
+	//아래의 객체가 업로드된 정보를 가지고 있으므로, 파라미터 등도 뽑아낼 수 있다.
 	ServletFileUpload upload = new ServletFileUpload(factory);
-
+	List<FileItem> items = upload.parseRequest(request);//요청 객체로부터 업로드 정보 뽑기
+	
+	Board board = new Board();
+	boolean flag=false; //업로드가 완료되었는지 여부 알수있는 변수
+	BoardDAO dao = new  BoardDAO();
+	
+	for(FileItem item: items){
+		if(item.isFormField()){//text 입력기반의 컴포넌트라면
+			if(item.getFieldName().equals("title")){
+				board.setTitle(item.getString());
+			}else if(item.getFieldName().equals("writer")){
+				board.setWriter(item.getString());
+			}else if(item.getFieldName().equals("content")){
+				board.setContent(item.getString());
+			}
+		}else{//파일이라면
+			//item.getName();//이름을 알고 있으므로, 원하는 data경로에 파일 생성
+			long time = System.currentTimeMillis();
+			String newName = time+"."+FileManager.getExtend(item.getName());
+			board.setFilename(newName);
+			
+			File file = new File(realPath+"/"+newName);
+			item.write(file);//하드디스크에 파일 생성
+			flag = true;
+			
+			//오라클에 insert
+			
+		}
+	}
+	if(flag){//업로드가 성공되면 insert
+		int result = dao.insert(board);
+		if(result==0){
+			out.print(getMsgBack("등록실패"));
+		}else{
+			out.print(getMsgURL("등록성공", "/board/list.jsp"));
+		}
+	}
 %>

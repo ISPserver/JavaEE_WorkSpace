@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=utf-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,25 +25,20 @@ tr:nth-child(even) {
 <body>
 	<table>
 		<tr>
-			<th>First Name</th>
-			<th>Last Name</th>
-			<th>Points</th>
+			<th>No</th>
+			<th>이미지</th>
+			<th>제목</th>
+			<th>작성자</th>
+			<th>등록일</th>
+			<th>조회수</th>
 		</tr>
+		
 		<tr>
-			<td>Jill</td>
-			<td>Smith</td>
-			<td>50</td>
+			<th>Jill</th>
+			<th>Smith</th>
+			<th>50</th>
 		</tr>
-		<tr>
-			<td>Eve</td>
-			<td>Jackson</td>
-			<td>94</td>
-		</tr>
-		<tr>
-			<td>Adam</td>
-			<td>Johnson</td>
-			<td>67</td>
-		</tr>
+		
 		<tr>
 			<td colspan="3" style="text-align:center">
 				[1][2][3]

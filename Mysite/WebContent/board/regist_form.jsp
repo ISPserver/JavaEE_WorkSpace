@@ -47,7 +47,7 @@ $(function(){ //onload
 		regist();
 	});
 	$(bt_list).click(function() {
-		
+		location.href="list.jsp'";
 	});
 })
 

@@ -16,7 +16,7 @@
 	}
 	int firstPage=currentPage-(currentPage-1)%blockSize;//첫 페이지1,11,21
 	int lastPage=firstPage+blockSize-1;//마지막페이지10,20,30
-	int curPos = (currentPage-1)*pageSize;
+	int curPos = (currentPage-1)*pageSize;//array 
 	int num = totalRecord - curPos; //페이지당 시작번호
 %>
 <!DOCTYPE html>
@@ -62,6 +62,7 @@ function hideColor(obj){
 			<td width="10%">등록일</td>
 			<td width="5%">조회수</td>
 		</tr>
+		
 		<%for(int i=1; i<=pageSize; i++){ %>
 		<%if(num<1)break; %>
 		<%News news = list.get(curPos++); %>
@@ -83,6 +84,7 @@ function hideColor(obj){
 			<td><%=news.getHit() %></td>
 		</tr>
 		<%}%>
+		
 		<tr>
 			<td colspan="5" align="center">
 				<a href="list.jsp?currentPage=<%=firstPage-1%>">◀</a>

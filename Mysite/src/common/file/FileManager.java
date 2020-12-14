@@ -3,6 +3,8 @@
  * */
 package common.file;
 
+import java.io.File;
+
 public class FileManager {
 	//확장자만 추출하기
 	public static String getExtend(String path) {
@@ -13,6 +15,11 @@ public class FileManager {
 		return ext;
 	}
 	
+	//파일 삭제( 호출자는 삭제 원하는 파일 경로 넘기기)
+	public static boolean deleteFile(String path) {
+		File file = new File(path);		
+		return file.delete();
+	}
 	/*
 	//단위테스트 해보기 위함
 	public static void main(String[] args) {

@@ -1,4 +1,9 @@
+<%@page import="admin.member.Admin"%>
 <%@ page contentType="text/html;charset=utf-8"%>
+<%
+	//세션에서 데이터 꺼내기
+	Admin admin = (Admin)session.getAttribute("ad");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,6 +29,10 @@ tr:nth-child(even) {
 </style>
 </head>
 <body>
+<div>
+	<%=admin.getMid()%>님 로그인중
+	<a href="/admin/logout.jsp">로그아웃</a>
+</div>
 <%@ include file="/admin/inc/topnavi.jsp" %>
 
 <h2>게시판 목록</h2>

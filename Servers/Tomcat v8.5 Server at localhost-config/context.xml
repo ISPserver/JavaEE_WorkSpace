@@ -22,6 +22,6 @@
     <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
 
 	  <ResourceLink type="javax.sql.DataSource"
-	                      name="jdbc/myoracle"
-	                      global="jdbc/myoracle" />
+	                      name="jdbc/mariadb"
+	                      global="jdbc/mariadb" />
 </Context>

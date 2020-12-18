@@ -48,7 +48,7 @@ tr:nth-child(even) {
 		<%Notice board = (Notice)list.get(curPos++); %>
 		<tr>
 			<td><%=num-- %></td>			
-			<td><a href="/board/detail?notice_id=<%=board.getNotice_id()%>"><%=board.getTitle() %></a></td>
+			<td><a href="/notice/detail.do?notice_id=<%=board.getNotice_id()%>"><%=board.getTitle() %></a></td>
 			<td><%=board.getWriter() %></td>
 			<td><%=board.getRegdate() %></td>
 			<td><%=board.getHit() %></td>

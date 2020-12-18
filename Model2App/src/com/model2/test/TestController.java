@@ -29,5 +29,11 @@ public class TestController implements Controller{
 	public String getResultView() {
 		return "/view/test/result";// json에 매핑해놓음
 	}
+
+	@Override
+	public boolean isForward() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

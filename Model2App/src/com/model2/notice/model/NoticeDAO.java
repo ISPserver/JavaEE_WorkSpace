@@ -29,6 +29,9 @@ public class NoticeDAO {
 	
 	public Notice select(int notice_id) {
 		Notice notice=null;
+		SqlSession sqlSession = manager.getSqlSession();
+		notice = sqlSession.selectOne("Notice.select", notice_id);
+		manager.close(sqlSession);
 		return notice;
 	}
 	

@@ -6,7 +6,10 @@
 	</select>
 	
 	<insert id="insert" parameterType="Notice">
-		insert into notice(title,writer,content) values(#{title},#{writer},#{content});
-		
+		insert into notice(title,writer,content) values(#{title},#{writer},#{content});		
 	</insert>
+	
+	<select id="select" parameterType="int" resultType="Notice">
+		select * from notice where notice_id=#{notice_id}
+	</select>
 </mapper>

@@ -1,4 +1,4 @@
-<%@page import="com.model2.notice.domain.Notice"%>
+<%@page import="com.model2.domain.Notice"%>
 <%@ page contentType="text/html;charset=utf-8"%>
 <%
 	//유저가 선택한 글의 pk 넘겨받기
